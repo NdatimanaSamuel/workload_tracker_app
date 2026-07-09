@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:workload_tracker_app/core/constants/api_client.dart';
+import 'package:workload_tracker_app/core/constants/auth_service.dart';
 import 'package:workload_tracker_app/core/theme/app_theme.dart';
 
 class LoginPage extends StatefulWidget {
@@ -40,21 +42,39 @@ class _LoginPageState extends State<LoginPage> {
 
   // This function will later call your AuthService and hit /auth/login.
   // For now it's just a placeholder showing the pattern.
-  void _handleLogin() async {
-    // .validate() runs every TextFormField's validator function.
-    // It returns false immediately if ANY field fails validation,
-    // and shows the error text under that field automatically.
-    if (!_formKey.currentState!.validate()) {
-      return; // stop here if the form isn't valid — don't attempt login
+void _handleLogin() async {
+  if (!_formKey.currentState!.validate()) return;
+
+  setState(() => _isLoading = true);
+
+  try {
+    final user = await AuthService.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+
+    // Route based on role — different dashboard for lecturer vs HOD
+    if (user['role'] == 'HOD') {
+      Navigator.pushReplacementNamed(context, '/hod-dashboard');
+    } else {
+      Navigator.pushReplacementNamed(context, '/lecturer-dashboard');
     }
-
-    setState(() => _isLoading = true); // show spinner, disable button
-
-    // TODO: replace this with a real call to AuthService.login(...)
-    await Future.delayed(const Duration(seconds: 2)); // fake network delay for now
-
-    setState(() => _isLoading = false); // hide spinner again
+  } on ApiException catch (e) {
+    setState(() => _isLoading = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.message)), // shows YOUR backend's real error message
+    );
+  } catch (e) {
+    setState(() => _isLoading = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Something went wrong. Please try again.")),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {

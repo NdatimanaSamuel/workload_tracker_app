@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:workload_tracker_app/screens/auth/login_screen.dart';
+import 'package:workload_tracker_app/screens/hod/%20hod_dashboard_screen.dart';
+import 'package:workload_tracker_app/screens/hod/add_lecturer_screen.dart';
+import 'package:workload_tracker_app/screens/hod/assign_module_screen.dart';
+import 'package:workload_tracker_app/screens/lecturer/add_module_screen.dart';
+import 'package:workload_tracker_app/screens/lecturer/lecturer_dashboard_screen.dart';
 import 'screens/shared/splash_screen.dart';
 // You'll add these imports once those screens exist:
 // import 'screens/auth/login_screen.dart';
@@ -25,6 +30,11 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginPage(), // add once built
+        '/add-module': (context) => const AddModuleScreen(),
+        '/assign-module': (context) => const AssignModuleScreen(),
+        '/hod-dashboard': (context) => const HodDashboardScreen(),
+        '/add-lecturer': (context) => const AddLecturerScreen(),
+        '/lecturer-dashboard': (context) => const LecturerDashboardScreen(),
       },
     );
   }
